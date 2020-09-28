@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const fetch = require("node-fetch");
 const fs = require('fs') //importing file save
-var moment = require('moment');
+const moment = require('moment');
 
 const bot = new Discord.Client();
 
@@ -9,27 +9,23 @@ const token = '';
 
 const PREFIX = '!';
 
+const xpPath = './datafile.json'
+const xpRead = fs.readFileSync(xpPath);
+const xpFile = JSON.parse(xpRead); //ready for use
 
-
-function saveUserData(authorId, bet) {
-    var xpPath = './datafile.json'
-    var xpRead = fs.readFileSync(xpPath);
-    var xpFile = JSON.parse(xpRead); //ready for use
-    var userId = authorId //user id here
+function saveUserData(authorId, bet) {   
+    let userId = authorId //user id here
     if (!xpFile[userId]) { //this checks if data for the user has already been created       
         return "Type \"!greendragon\" to get started.";
     } else {
-        var currencyVar = Number(xpFile[userId].currency) + Number(bet) //add 50 to their original xp
+        let currencyVar = Number(xpFile[userId].currency) + Number(bet) //add 50 to their original xp
         xpFile[userId] = { currency: currencyVar, lastClaim: xpFile[userId].lastClaim };
         fs.writeFileSync(xpPath, JSON.stringify(xpFile, null, 2));
     }
 }
 
-function slayGreenDragons(authorId) {
-    var xpPath = './datafile.json'
-    var xpRead = fs.readFileSync(xpPath);
-    var xpFile = JSON.parse(xpRead); //ready for use
-    var userId = authorId //user id here
+function slayGreenDragons(authorId) {  
+    let userId = authorId //user id here
     if (!xpFile[userId]) {        //this checks if data for the user has already been created
         xpFile[userId] = { currency: 1000, lastClaim: moment() }; //if not, create it
         fs.writeFileSync(xpPath, JSON.stringify(xpFile, null, 2));
@@ -38,30 +34,27 @@ function slayGreenDragons(authorId) {
     else {
         if (moment().diff(xpFile[userId].lastClaim >= 3600000)) {
             console.log(moment().diff(xpFile[userId].lastClaim));
-            var currencyVar = Number(xpFile[userId].currency) + Number(bet) //add 50 to their original xp
+            let currencyVar = Number(xpFile[userId].currency) + Number(bet) //add 50 to their original xp
             xpFile[userId] = { currency: currencyVar, lastClaim: moment() }; //if not, create it
             fs.writeFileSync(xpPath, JSON.stringify(xpFile, null, 2));
             return "Added 1000 coins.";
         }
         else {
-            var minutes = 60 - (moment().diff(xpFile[userId].lastClaim) / 60000).toFixed(0);
+            let minutes = 60 - (moment().diff(xpFile[userId].lastClaim) / 60000).toFixed(0);
             console.log(minutes);
 
-            return "You need to wait for " + {minutes} + "before you can go kill Green Dragons again.";
+            return "You need to wait for " + { minutes } + "before you can go kill Green Dragons again.";
         }
     }
 }
 
 function fetchUserCurrency(authorId, bet, command) {
-    var xpPath = './datafile.json'
-    var xpRead = fs.readFileSync(xpPath);
-    var xpFile = JSON.parse(xpRead); //ready for use
-    var userId = authorId //user id here
+    let userId = authorId //user id here
     if (!xpFile[userId]) { //this checks if data for the user has already been created
         return false;
     } else {
         if (command) {
-                return (Number(xpFile[userId].currency));          
+            return (Number(xpFile[userId].currency));
         }
         else {
             if (Number(xpFile[userId].currency) >= bet) {
